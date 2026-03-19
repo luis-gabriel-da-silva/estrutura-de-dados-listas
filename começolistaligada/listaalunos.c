@@ -1,24 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define max 50
 #define inv -1
+#define maxdisciplinas 10
 
-typedef int Tipo_Chave;
+typedef int Matricula;
 
 typedef char Disciplina[50];
 
 typedef struct
 {
-    Tipo_Chave chave;
+    Matricula matricula;
     Disciplina disciplina[5];
     char Nome_Aluno[100];
-} Registro;
+    int qtdDisciplinas;
+} Aluno;
 
 typedef struct
 {
-    Registro r;
+    Aluno r;
     int proximo;
 } Elemento;
 
@@ -31,10 +34,10 @@ typedef struct
 
 void Iniciar_Lista(Lista *L);
 int Numero_Elementos(Lista *L);
-int Busca_Sequencial_Ordenada(Lista *L, Tipo_Chave ch);
-bool Inserir_Elemento_Ordenado(Lista *L, Registro r);
+int Busca_Sequencial_Ordenada(Lista *L, Matricula ch);
+bool Inserir_Elemento_Ordenado(Lista *L, Aluno r);
 int Obtencao_do_NO(Lista *L);
-bool Excluir_Elemento_Lista(Lista *L, Tipo_Chave ch);
+bool Excluir_Elemento_Lista(Lista *L, Matricula ch);
 void Devolver_No_Disponivel_Lista(Lista *L, int i);
 void Reinicializar_Lista(Lista *L);
 
@@ -59,43 +62,91 @@ int Numero_Elementos(Lista *L)
     }
     return tamanho;
 }
-
 void Imprimir_Lista(Lista *L)
 {
     int i = L->inicio;
-    printf("\t Lista \n");
+    printf("\t ===== Lista ===== \n");
     while (i != inv)
     {
-        printf(" %d ", L->V[i].r.chave);
+        printf("Nº matrícula: ");
+        printf("%d \n", L->V[i].r.matricula);
+        printf("Nome: ") /
+            printf("%s \n", L->V[i].r.Nome_Aluno);
+        printf("Disciplinas: ");
+        for (int j = 0; j < L->V[i].r.qtdDisciplinas; j++)
+        {
+            printf("%s - ", L->V[i].r.disciplina[j]);
+        }
+        printf("\n ------------------ \n");
         i = L->V[i].proximo;
     }
     printf("\n\n");
 }
 
-int Busca_Sequencial_Ordenada(Lista *L, Tipo_Chave ch)
+int Busca_Sequencial_Ordenada(Lista *L, Matricula ch)
 {
     int i = L->inicio;
-    while (i != inv && L->V[i].r.chave < ch)
+    while (i != inv && L->V[i].r.matricula < ch)
         i = L->V[i].proximo;
-    if (i != inv && L->V[i].r.chave == ch)
+    if (i != inv && L->V[i].r.matricula == ch)
         return i;
     else
         return inv;
 }
 
-bool Inserir_Elemento_Ordenado(Lista *L, Registro r)
+void Busca_Disciplina(Lista *L, char ch[])
+{
+    int i = L->inicio;
+    bool encontrou = false;
+    while (i != inv)
+    {
+        for (int j = 0; j < L->V[i].r.qtdDisciplinas; j++)
+        {
+            if (strcmp(L->V[i].r.disciplina[j], ch) == 0)
+            {
+                printf("Nº matrícula: ");
+                printf("%d \n", L->V[i].r.matricula);
+                printf("Nome: ");
+                printf("%s \n", L->V[i].r.Nome_Aluno);
+                encontrou = true;
+                break;
+            }
+            i = L->V[i].proximo;
+
+            if (!encontrou)
+            {
+                printf("Nenhum aluno encontrado");
+            }
+        }
+    }
+}
+
+bool Inserir_Disciplina(Aluno *a, char disciplina[])
+{
+    if (a->qtdDisciplinas <= 5)
+    {
+        strcpy(a->disciplina[a->qtdDisciplinas], disciplina);
+        a->qtdDisciplinas++;
+    }
+    else
+    {
+        printf("Quantidade de disciplina excedidas!\n");
+    }
+}
+
+bool Inserir_Elemento_Ordenado(Lista *L, Aluno r)
 {
     if (L->disponivel == inv)
         return false;
     int anterior = inv;
     int i = L->inicio;
-    Tipo_Chave ch = r.chave;
-    while (i != inv && L->V[i].r.chave < ch)
+    Matricula mat = r.matricula;
+    while (i != inv && L->V[i].r.matricula < mat)
     {
         anterior = i;
         i = L->V[i].proximo;
     }
-    if (i != inv && L->V[i].r.chave == ch)
+    if (i != inv && L->V[i].r.matricula == mat)
         return false;
     i = Obtencao_do_NO(L);
     L->V[i].r = r;
@@ -120,16 +171,16 @@ int Obtencao_do_NO(Lista *L)
     return resultado;
 }
 
-bool Excluir_Elemento_Lista(Lista *L, Tipo_Chave ch)
+bool Excluir_Elemento_Lista(Lista *L, Matricula ch)
 {
     int anterior = inv;
     int i = L->inicio;
-    while (i != inv && L->V[i].r.chave < ch)
+    while (i != inv && L->V[i].r.matricula < ch)
     {
         anterior = i;
         i = L->V[i].proximo;
     }
-    if (i == inv || L->V[i].r.chave != ch)
+    if (i == inv || L->V[i].r.matricula != ch)
         return false;
     if (anterior == inv)
         L->inicio = L->V[i].proximo;
@@ -154,9 +205,9 @@ int main()
 {
     Lista L;
     int opcao;
-    Registro r;
-    Tipo_Chave chave;
-    Disciplina disciplina;
+    Aluno r;
+    Matricula matricula;
+    Disciplina disciplina[maxdisciplinas];
 
     Iniciar_Lista(&L);
 
@@ -176,20 +227,38 @@ int main()
         switch (opcao)
         {
         case 1:
-            printf("Digite a chave: ");
-            scanf("%d", &r.chave);
+            printf("Digite a matricula: ");
+            scanf("%d", &r.matricula);
+            printf("Digite o nome: ");
+            scanf(" %[^\n]", r.Nome_Aluno);
+
+            r.qtdDisciplinas = 0;
+
+            int n;
+            char disciplina[50];
+
+            printf("Quantas disciplinas? ");
+            scanf("%d", &n);
+
+            for (int i = 0; i < n; i++)
+            {
+                printf("Digite a disciplina: ");
+                scanf(" %[^\n]", disciplina);
+
+                Inserir_Disciplina(&r, disciplina);
+            }
 
             if (Inserir_Elemento_Ordenado(&L, r))
                 printf("Inserido com sucesso!\n");
             else
-                printf("Erro ao inserir (lista cheia ou chave repetida)\n");
+                printf("Erro ao inserir (lista cheia ou matricula repetida)\n");
             break;
 
         case 2:
-            printf("Digite a chave para remover: ");
-            scanf("%d", &chave);
+            printf("Digite a matricula para remover: ");
+            scanf("%d", &matricula);
 
-            if (Excluir_Elemento_Lista(&L, chave))
+            if (Excluir_Elemento_Lista(&L, matricula))
                 printf("Removido com sucesso!\n");
             else
                 printf("Elemento nao encontrado!\n");
@@ -197,10 +266,10 @@ int main()
 
         case 3:
         {
-            printf("Digite a chave para buscar: ");
-            scanf("%d", &chave);
+            printf("Digite a matricula para buscar: ");
+            scanf("%d", &matricula);
 
-            int pos = Busca_Sequencial_Ordenada(&L, chave);
+            int pos = Busca_Sequencial_Ordenada(&L, matricula);
 
             if (pos != inv)
                 printf("Elemento encontrado na posicao %d\n", pos);
@@ -229,7 +298,6 @@ int main()
         default:
             printf("Opcao invalida!\n");
         }
-
     } while (opcao != 0);
 
     return 0;

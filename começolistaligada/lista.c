@@ -9,14 +9,7 @@ typedef int Tipo_Chave;
 
 typedef struct
 {
-    char disciplina[50];
-} Disciplina;
-
-typedef struct
-{
     Tipo_Chave chave;
-    Disciplina disciplina[5];
-    char Nome_Aluno[100];
 } Registro;
 
 typedef struct
@@ -159,7 +152,6 @@ int main()
     int opcao;
     Registro r;
     Tipo_Chave chave;
-    Disciplina disciplina;
 
     Iniciar_Lista(&L);
 
