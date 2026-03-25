@@ -24,7 +24,7 @@ typedef struct
     int inicio;
     int disponivel;
 } Lista;
-ai
+
 
 void Iniciar_Lista(Lista *L);
 int Numero_Elementos(Lista *L);
