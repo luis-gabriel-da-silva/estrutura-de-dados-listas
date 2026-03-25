@@ -125,8 +125,61 @@ void Reinicializar_Lista(Lista *L)
     L->inicio = NULL;
 }
 
-Inserir_Ordenadamente_pelo_numero_chamada_Lista(Lista *L, Registro r);
-Excluir_pela_Matricula_Busca_Binaria(Lista *L, Registro r);
+void Excluir_pela_Matricula_Busca_Binaria(Lista *L, Tipo_Chave ch)
+{
+    PONT anterior = NULL;
+    PONT atual = L->inicio;
+
+    while (atual != NULL && atual->r.chave < ch)
+    {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if (atual == NULL || atual->r.chave < ch)
+        return false;
+
+    if (anterior == NULL)
+    {
+        L->inicio = atual->proximo;
+    }
+    else
+    {
+        anterior->proximo = atual->proximo;
+    }
+    free(atual);
+    return true;
+}
+
+bool Inserir_Ordenadamente_pelo_numero_chamada_Lista(Lista *L, Registro r)
+{
+    {
+        PONT novo = (PONT)malloc(sizeof(Elemento));
+        novo->r = r;
+
+        // lista vazia ou menor que o primeiro
+        if (L->inicio == NULL || r.chave < L->inicio->r.chave)
+        {
+            novo->proximo = L->inicio;
+            L->inicio = novo;
+            return true;
+        }
+
+        PONT atual = L->inicio;
+
+        // encontra posição
+        while (atual->proximo != NULL && atual->proximo->r.chave < r.chave)
+        {
+            atual = atual->proximo;
+        }
+
+        // insere
+        novo->proximo = atual->proximo;
+        atual->proximo = novo;
+
+        return true;
+    }
+}
 
 int main()
 {
@@ -179,7 +232,7 @@ int main()
         case 5:
             printf("Digite a matricula do aluno que deseja excluir: ");
             scanf("%d", &a.chave);
-            Excluir_pela_Matricula_Busca_Binaria(&L, a);
+            Excluir_pela_Matricula_Busca_Binaria(&L, a.chave);
         }
         printf("\n\n==================================\n\n");
         fflush(stdin);
