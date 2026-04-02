@@ -25,7 +25,6 @@ typedef struct
     int disponivel;
 } Lista;
 
-
 void Iniciar_Lista(Lista *L);
 int Numero_Elementos(Lista *L);
 int Busca_Sequencial_Ordenada(Lista *L, Tipo_Chave ch);
