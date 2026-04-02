@@ -45,7 +45,7 @@ void Imprimir_Lista(Lista *L)
     PONT aux = L->inicio;
     while (aux != NULL)
     {
-        printf(" %d ", aux->r.chave);
+        printf("Matricula: %d | Nome: %s\n", aux->r.chave, aux->r.nome);
         aux = aux->proximo;
     }
     printf("\n\n");
@@ -57,7 +57,11 @@ PONT Busca_Sequencial(Lista *L, Tipo_Chave ch)
     while (posicao != NULL)
     {
         if (posicao->r.chave == ch)
+        {
+            printf("Matrícula: %d", posicao->r.chave);
+            printf("Nome: %s", posicao->r.nome);
             return posicao;
+        }
         posicao = posicao->proximo;
     }
     return NULL;
@@ -67,7 +71,7 @@ PONT Busca_Sequencial_Aux(Lista *L, Tipo_Chave ch, PONT *anterior)
 {
     *anterior = NULL;
     PONT atual = L->inicio;
-    while ((atual != NULL) && (atual->r.chave == ch))
+    while ((atual != NULL) && (atual->r.chave != ch))
     {
         *anterior = atual;
         atual = atual->proximo;
@@ -110,7 +114,7 @@ bool Excluir_Elemento_Lista(Lista *L, Tipo_Chave ch)
     else
         anterior->proximo = i->proximo;
     free(i);
-    return false;
+    return true;
 }
 
 void Reinicializar_Lista(Lista *L)
@@ -125,43 +129,108 @@ void Reinicializar_Lista(Lista *L)
     L->inicio = NULL;
 }
 
-Inserir_Ordenadamente_pelo_numero_chamada_Lista(Lista *L, Registro r);
-Excluir_pela_Matricula_Busca_Binaria(Lista *L, Registro r);
+bool Excluir_pela_Matricula_Busca_Binaria(Lista *L, Tipo_Chave ch)
+{
+    PONT anterior = NULL;
+    PONT atual = L->inicio;
+
+    while (atual != NULL && atual->r.chave < ch)
+    {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if (atual == NULL || atual->r.chave < ch)
+        return false;
+
+    if (anterior == NULL)
+    {
+        L->inicio = atual->proximo;
+    }
+    else
+    {
+        anterior->proximo = atual->proximo;
+    }
+    free(atual);
+    return true;
+}
+
+bool Inserir_Ordenadamente_pelo_numero_chamada_Lista(Lista *L, Registro r)
+{
+    {
+        PONT novo = (PONT)malloc(sizeof(Elemento));
+        novo->r = r;
+
+        // lista vazia ou menor que o primeiro
+        if (L->inicio == NULL || r.chave < L->inicio->r.chave)
+        {
+            novo->proximo = L->inicio;
+            L->inicio = novo;
+            return true;
+        }
+
+        PONT atual = L->inicio;
+
+        // encontra posição
+        while (atual->proximo != NULL && atual->proximo->r.chave < r.chave)
+        {
+            atual = atual->proximo;
+        }
+
+        // insere
+        novo->proximo = atual->proximo;
+        atual->proximo = novo;
+
+        return true;
+    }
+}
 
 int main()
 {
-    setlocale(LC_ALL, "");
+    setlocale(LC_ALL, "pt_BR.UTF-8");
+
     Lista L;
-    char sair, op;
+    char op;
     int opcao = 0;
-    Tipo_Chave h;
     Registro a;
 
     Inicializar_Lista(&L);
+
     do
     {
         printf("1- Criar Lista de alunos: \n");
         printf("2- Inserir aluno na lista: \n");
         printf("3- Imprimir a lista: \n");
-        printf("4- Inserir aluno ordenadamente pelo n�mero da matricula na lista: \n");
-        printf("5- Excluir aluno pela busca binaria usando a matricula: \n");
-        printf("Digite a op��o: \n");
+        printf("4- Inserir aluno ordenadamente: \n");
+        printf("5- Excluir aluno pela matricula: \n");
+        printf("6- Buscar aluno pela matricula: \n");
+        printf("0- Sair\n");
+
+        printf("Digite a opção: ");
         scanf("%d", &opcao);
+
         printf("\n==================================\n");
+
         switch (opcao)
         {
         case 1:
             Inicializar_Lista(&L);
             break;
+
         case 2:
             do
             {
                 printf("\nDigite a matricula do aluno: ");
                 scanf("%d", &a.chave);
+
+                printf("Digite o nome do aluno: ");
+                scanf(" %[^\n]", a.nome);
+
                 Inserir_Elemento_Lista(&L, a);
-                printf("\nDeseja digitar mais elementos: ");
-                fflush(stdin);
-                scanf("%c", &op);
+
+                printf("Deseja continuar? (s/n): ");
+                scanf(" %c", &op);
+
             } while (op != 'n');
             break;
 
@@ -171,21 +240,45 @@ int main()
 
         case 4:
             printf("Digite o nome do aluno: ");
-            scanf("%s", a.nome);
-            printf("Digite a matricula do aluno: ");
+            scanf(" %[^\n]", a.nome);
+
+            printf("Digite a matricula: ");
             scanf("%d", &a.chave);
+
             Inserir_Ordenadamente_pelo_numero_chamada_Lista(&L, a);
             break;
+
         case 5:
-            printf("Digite a matricula do aluno que deseja excluir: ");
+            printf("Digite a matricula para excluir: ");
             scanf("%d", &a.chave);
-            Excluir_pela_Matricula_Busca_Binaria(&L, a);
+
+            Excluir_pela_Matricula_Busca_Binaria(&L, a.chave);
+            break;
+
+        case 6:
+        {
+            printf("Digite a matricula: ");
+            scanf("%d", &a.chave);
+
+            PONT res = Busca_Sequencial(&L, a.chave);
+
+            if (res == NULL)
+                printf("Aluno não encontrado\n");
+
+            break;
         }
-        printf("\n\n==================================\n\n");
-        fflush(stdin);
-        printf("Deseja sair do programa (s/n): \n");
-        scanf("%c", &sair);
-        printf("\n\n==================================\n\n");
-    } while (sair != 's');
+
+        case 0:
+            printf("Saindo...\n");
+            break;
+
+        default:
+            printf("Opção inválida\n");
+        }
+
+        printf("\n==================================\n\n");
+
+    } while (opcao != 0);
+
     return 0;
 }
