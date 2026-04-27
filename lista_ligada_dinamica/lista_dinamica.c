@@ -53,133 +53,133 @@ void Imprimir_Lista(Lista *L)
 
 PONT Busca_Sequencial(Lista *L, Tipo_Chave ch)
 {
-    PONT posicao = L->inicio;
-    while (posicao != NULL)
+    PONT posicao = L->inicio; // cria auxilair
+    while (posicao != NULL)   // enquanto não acaba
     {
-        if (posicao->r.chave == ch)
+        if (posicao->r.chave == ch) // se posição igual chave
         {
             printf("Matrícula: %d", posicao->r.chave);
-            printf("Nome: %s", posicao->r.nome);
-            return posicao;
+            printf("Nome: %s", posicao->r.nome); // print
+            return posicao;                      // retorna a posição
         }
-        posicao = posicao->proximo;
+        posicao = posicao->proximo; // passa para o proximo
     }
-    return NULL;
+    return NULL; // n deu certo retorna null
 }
 
 PONT Busca_Sequencial_Aux(Lista *L, Tipo_Chave ch, PONT *anterior)
 {
-    *anterior = NULL;
-    PONT atual = L->inicio;
-    while ((atual != NULL) && (atual->r.chave != ch))
+    *anterior = NULL;                                 // passa o anterior como null
+    PONT atual = L->inicio;                           // aponta para o inicio o atual
+    while ((atual != NULL) && (atual->r.chave != ch)) // se atual n for null e nem chave ser igual a chave
     {
-        *anterior = atual;
-        atual = atual->proximo;
+        *anterior = atual;      // anterior vira atual
+        atual = atual->proximo; // atual vira proximo
     }
-    if ((atual != NULL) && (atual->r.chave == ch))
-        return atual;
-    return NULL;
+    if ((atual != NULL) && (atual->r.chave == ch)) // se atual for igual a chave
+        return atual;                              // retorna atual
+    return NULL;                                   // se n retorna null
 }
 
 bool Inserir_Elemento_Lista(Lista *L, Registro r)
 {
-    Tipo_Chave ch = r.chave;
-    PONT anterior, i;
-    i = Busca_Sequencial_Aux(L, ch, &anterior);
+    Tipo_Chave ch = r.chave;                    // denomina chave como ch
+    PONT anterior, i;                           // cria os pont
+    i = Busca_Sequencial_Aux(L, ch, &anterior); // retorna se existe, anterior e atual
     if (i != NULL)
-        return false;
-    i = (PONT)malloc(sizeof(Elemento));
-    i->r = r;
-    if (anterior == NULL)
+        return false;                   // se for diferente de null retorna false
+    i = (PONT)malloc(sizeof(Elemento)); // aloca na memória o elemento
+    i->r = r;                           // aloca os dados em r
+    if (anterior == NULL)               // se anterior for null
     {
         i->proximo = L->inicio;
-        L->inicio = i;
+        L->inicio = i; // bota no inicio
     }
     else
     {
-        i->proximo = anterior->proximo;
-        anterior->proximo = i;
+        i->proximo = anterior->proximo; // se não i aponta para o proximo do anterior
+        anterior->proximo = i;          // e anterior aponta para o i
     }
-    return true;
+    return true; // return true se alocou
 }
 
 bool Excluir_Elemento_Lista(Lista *L, Tipo_Chave ch)
 {
     PONT anterior, i;
-    i = Busca_Sequencial_Aux(L, ch, &anterior);
-    if (i == NULL)
+    i = Busca_Sequencial_Aux(L, ch, &anterior); // busca se existe
+    if (i == NULL)                              // se n existe retorna false
         return false;
     if (anterior == NULL)
-        L->inicio = i->proximo;
+        L->inicio = i->proximo; // se anterior null o inicio vira o proximo do inicio antigo
     else
-        anterior->proximo = i->proximo;
-    free(i);
-    return true;
+        anterior->proximo = i->proximo; // se n o anterior aponta para o proximo do i
+    free(i);                            // libera espaço do i
+    return true;                        // retorna true
 }
 
 void Reinicializar_Lista(Lista *L)
 {
-    PONT aux = L->inicio;
-    while (aux != NULL)
+    PONT aux = L->inicio; // cria auxiliar
+    while (aux != NULL)   // enquanto n acaba
     {
-        PONT limpar = aux;
-        aux = aux->proximo;
-        free(limpar);
+        PONT limpar = aux;  // limpar vira aux
+        aux = aux->proximo; // aux vai pro proximo
+        free(limpar);       // libera o atual
     }
-    L->inicio = NULL;
+    L->inicio = NULL; // inicio aponta para null
 }
 
 bool Excluir_pela_Matricula_Busca_Binaria(Lista *L, Tipo_Chave ch)
 {
     PONT anterior = NULL;
-    PONT atual = L->inicio;
+    PONT atual = L->inicio; // inicializa
 
-    while (atual != NULL && atual->r.chave < ch)
+    while (atual != NULL && atual->r.chave < ch) // enquanto n acabar e chave menor q chave passada
     {
         anterior = atual;
-        atual = atual->proximo;
+        atual = atual->proximo; // armazena anterior em atual e passa para o proximo
     }
 
-    if (atual == NULL || atual->r.chave < ch)
-        return false;
+    if (atual == NULL || atual->r.chave != ch)
+        return false; // se atual diferenter q chave passada, retorna false
 
     if (anterior == NULL)
     {
-        L->inicio = atual->proximo;
+        L->inicio = atual->proximo; // se o anterior for null o inicio aponta para o proximo
     }
     else
     {
-        anterior->proximo = atual->proximo;
+        anterior->proximo = atual->proximo; // se não o anterior aponta para o próximo do atual
     }
-    free(atual);
-    return true;
+    free(atual); // exclui atual
+    return true; // returna true
 }
 
 bool Inserir_Ordenadamente_pelo_numero_chamada_Lista(Lista *L, Registro r)
 {
     {
-        PONT novo = (PONT)malloc(sizeof(Elemento));
-        novo->r = r;
+        PONT novo = (PONT)malloc(sizeof(Elemento)); // aloca elemento
+        novo->r = r;                                // coloca os dados no elemento
 
         // lista vazia ou menor que o primeiro
-        if (L->inicio == NULL || r.chave < L->inicio->r.chave)
+        if (L->inicio == NULL || r.chave < L->inicio->r.chave) // se inicio aponta para null e chave menor q o inicio da lista
         {
-            novo->proximo = L->inicio;
-            L->inicio = novo;
-            return true;
+            novo->proximo = L->inicio; // novo aponta para inicio
+            L->inicio = novo;          // inicio vira novo
+            return true;               // encerra com sucesso
         }
 
-        PONT atual = L->inicio;
+        PONT atual = L->inicio; // atual aponta para inicio
 
         // encontra posição
         while (atual->proximo != NULL && atual->proximo->r.chave < r.chave)
-        {
+        { // enquanto atual n aponta para o null e o proximo de atual é menor que o novo
             atual = atual->proximo;
         }
 
         // insere
-        novo->proximo = atual->proximo;
-        atual->proximo = novo;
+        novo->proximo = atual->proximo; // novo aponta para o proximo do atual
+        atual->proximo = novo;          // proximo do atual vira novo
 
         return true;
     }
