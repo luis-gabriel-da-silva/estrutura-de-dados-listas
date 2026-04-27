@@ -53,6 +53,7 @@ void Imprimir_Lista(Lista *L)
 
 PONT Busca_Sequencial(Lista *L, Tipo_Chave ch)
 {
+<<<<<<< HEAD
     PONT posicao = L->inicio; // cria auxilair
     while (posicao != NULL)   // enquanto não acaba
     {
@@ -65,10 +66,25 @@ PONT Busca_Sequencial(Lista *L, Tipo_Chave ch)
         posicao = posicao->proximo; // passa para o proximo
     }
     return NULL; // n deu certo retorna null
+=======
+    PONT posicao = L->inicio; // faz um auxiliar
+    while (posicao != NULL) // enquanto o auxiliar for diferente de nulo
+    {
+        if (posicao->r.chave == ch) // se o campo chave do registro for igual a chave passada por parametro
+        {
+            printf("Matrícula: %d", posicao->r.chave); 
+            printf("Nome: %s", posicao->r.nome);
+            return posicao; // retorna o endereço do elemento encontrado
+        }
+        posicao = posicao->proximo; // avança para o próximo elemento
+    }
+    return NULL; // se chegar aqui, é porque não encontrou o elemento, então retorna NULL
+>>>>>>> 944749dc0107505328d0deeb2ad0687b343f9ce5
 }
 
-PONT Busca_Sequencial_Aux(Lista *L, Tipo_Chave ch, PONT *anterior)
+PONT Busca_Sequencial_Aux(Lista *L, Tipo_Chave ch, PONT *anterior) // função de busca sequencial auxiliar, recebe um ponteiro para a lista, a chave a ser buscada e um ponteiro para o elemento anterior
 {
+<<<<<<< HEAD
     *anterior = NULL;                                 // passa o anterior como null
     PONT atual = L->inicio;                           // aponta para o inicio o atual
     while ((atual != NULL) && (atual->r.chave != ch)) // se atual n for null e nem chave ser igual a chave
@@ -79,9 +95,21 @@ PONT Busca_Sequencial_Aux(Lista *L, Tipo_Chave ch, PONT *anterior)
     if ((atual != NULL) && (atual->r.chave == ch)) // se atual for igual a chave
         return atual;                              // retorna atual
     return NULL;                                   // se n retorna null
+=======
+    *anterior = NULL; // anterior é um ponteiro para o elemento anterior, começa como NULL
+    PONT atual = L->inicio; // atual é um ponteiro para o elemento atual, começa no início da lista
+    while ((atual != NULL) && (atual->r.chave != ch)) // enquanto o atual for diferente de NULL e a chave do registro do atual for diferente da chave buscada
+    {
+        *anterior = atual; // ponteiro de anterior recebe o endereço do atual
+        atual = atual->proximo; // atual avança para o próximo elemento
+    }
+    if ((atual != NULL) && (atual->r.chave == ch)) // se o atual for diferente de NULL e a chave do registro do atual for igual à chave buscada
+        return atual; // retorna o endereço do elemento encontrado
+    return NULL; // se chegar aqui, é porque não encontrou o elemento, então retorna NULL
+>>>>>>> 944749dc0107505328d0deeb2ad0687b343f9ce5
 }
 
-bool Inserir_Elemento_Lista(Lista *L, Registro r)
+bool Inserir_Elemento_Lista(Lista *L, Registro r) // função para inserir um elemento na lista, recebe um ponteiro para a lista e um registro a ser inserido
 {
     Tipo_Chave ch = r.chave;                    // denomina chave como ch
     PONT anterior, i;                           // cria os pont
